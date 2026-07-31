@@ -1,7 +1,7 @@
 from collections import Counter
 from collections.abc import Callable
 
-from .events import Event, LocationClearedEvent, VictoryEvent
+from .events import Event, LocationClearedEvent, VictoryEvent, PlayerDiedEvent
 from .gameboard import Gameboard
 from .graphics import Graphic
 from .inputs import Direction
@@ -72,7 +72,10 @@ class Player:
         if self.current_health <= 0:
             self.die()
 
-    def die(self) -> None:
+    def die(self, cause: str = "From a broken heart.", is_death_link: bool = False) -> None:
+        if not is_death_link:
+            event = PlayerDiedEvent(cause)
+            self.push_event(event)
         self.respawn()
         self.gameboard.respawn_final_boss()
         self.gameboard.heal_alive_enemies()

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, DeathLink
 
 # In this file, we define the options the player can pick.
 # The most common types of options are Toggle, Range and Choice.
@@ -115,13 +115,14 @@ class APQuestOptions(PerGameCommonOptions):
     trap_chance: TrapChance
     confetti_explosiveness: ConfettiExplosiveness
     player_sprite: PlayerSprite
+    death_link: DeathLink
 
 
 # If we want to group our options by similar type, we can do so as well. This looks nice on the website.
 option_groups = [
     OptionGroup(
         "Gameplay Options",
-        [HardMode, Hammer, ExtraStartingChest, StartWithOneConfettiCannon, TrapChance],
+        [HardMode, DeathLink, Hammer, ExtraStartingChest, StartWithOneConfettiCannon, TrapChance],
     ),
     OptionGroup(
         "Aesthetic Options",
@@ -142,6 +143,7 @@ option_presets = {
     },
     "the true way to play": {
         "hard_mode": True,
+        "death_link": True,
         "hammer": True,
         "extra_starting_chest": True,
         "start_with_one_confetti_cannon": True,

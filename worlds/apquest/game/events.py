@@ -27,6 +27,11 @@ class VictoryEvent(Event):
 
 
 @dataclass
+class PlayerDiedEvent(Event):
+    cause: str
+
+
+@dataclass
 class LocationalEvent(Event):
     x: int
     y: int

@@ -8,7 +8,7 @@ from CommonClient import ClientCommandProcessor, CommonContext, logger, server_l
 from NetUtils import ClientStatus
 from Utils import gui_enabled
 
-from ..game.events import ConfettiFired, LocationClearedEvent, MathProblemSolved, MathProblemStarted, VictoryEvent
+from ..game.events import ConfettiFired, LocationClearedEvent, MathProblemSolved, MathProblemStarted, VictoryEvent, PlayerDiedEvent
 from ..game.game import Game
 from ..game.inputs import Input
 from ..game.items import Item
@@ -188,6 +188,11 @@ class APQuestContext(CommonContext):
             self.connection_status = ConnectionStatus.GAME_RUNNING
             self.ui.game_started()
 
+    def on_deathlink(self, data):
+        #not sure what data is, but maybe print it?
+        self.ap_quest_game.player.die(True)
+        return super().on_deathlink(data)
+    
     async def disconnect(self, *args: Any, **kwargs: Any) -> None:
         self.finished_game = False
         self.locations_checked = set()
@@ -245,6 +250,10 @@ class APQuestContext(CommonContext):
 
             if isinstance(event, MathProblemSolved):
                 self.play_jingle(MATH_PROBLEM_SOLVED_JINGLE)
+                continue
+
+            if isinstance(event, PlayerDiedEvent):
+                self.send_death(event.cause)
                 continue
 
     def input_and_rerender(self, input_key: Input) -> None:
