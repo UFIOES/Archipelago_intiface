@@ -82,5 +82,5 @@ class APQuestWorld(World):
     def fill_slot_data(self) -> Mapping[str, Any]:
         # If you need access to the player's chosen options on the client side, there is a helper for that.
         return self.options.as_dict(
-            "hard_mode", "hammer", "extra_starting_chest", "confetti_explosiveness", "player_sprite"
+            "hard_mode", "hammer", "extra_starting_chest", "confetti_explosiveness", "player_sprite", "death_link"
         )
