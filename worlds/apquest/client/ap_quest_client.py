@@ -68,6 +68,8 @@ class APQuestContext(CommonContext):
     extra_starting_chest: bool = False
     player_sprite: PlayerSprite = PlayerSprite.HUMAN
     death_link: bool = False
+    queued_death_link: bool = False
+    queued_death_cause: str = ""
 
     connection_status: ConnectionStatus = ConnectionStatus.NOT_CONNECTED
 
@@ -142,6 +144,11 @@ class APQuestContext(CommonContext):
                 if rerender:
                     self.render()
 
+                if self.queued_death_link:
+                    await self.send_death(self.queued_death_cause)
+                    self.queued_death_link = False
+                    self.queued_death_cause = ""
+
                 if self.ap_quest_game.player.has_won and not self.finished_game:
                     await self.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                     self.finished_game = True
@@ -196,7 +203,8 @@ class APQuestContext(CommonContext):
 
     def on_deathlink(self, data):
         #not sure what data is, but maybe print it?
-        self.ap_quest_game.player.die(True)
+        text = data.get("cause", "")
+        self.ap_quest_game.player.die(text, True)
         return super().on_deathlink(data)
     
     async def disconnect(self, *args: Any, **kwargs: Any) -> None:
@@ -259,7 +267,8 @@ class APQuestContext(CommonContext):
                 continue
 
             if isinstance(event, PlayerDiedEvent):
-                self.send_death(event.cause)
+                self.queued_death_link = True
+                self.queued_death_cause = event.cause
                 continue
 
     def input_and_rerender(self, input_key: Input) -> None:
