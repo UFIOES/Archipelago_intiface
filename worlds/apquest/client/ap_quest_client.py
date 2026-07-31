@@ -67,6 +67,7 @@ class APQuestContext(CommonContext):
     hammer: bool = False
     extra_starting_chest: bool = False
     player_sprite: PlayerSprite = PlayerSprite.HUMAN
+    death_link: bool = False
 
     connection_status: ConnectionStatus = ConnectionStatus.NOT_CONNECTED
 
@@ -115,6 +116,9 @@ class APQuestContext(CommonContext):
             if not self.ap_quest_game or not self.ap_quest_game.gameboard or not self.ap_quest_game.gameboard.ready:
                 await asyncio.sleep(0.1)
                 continue
+
+            if "DeathLink" in self.tags != self.death_link:
+                await self.update_death_link(self.death_link)
 
             try:
                 while self.queued_locations:
@@ -168,6 +172,8 @@ class APQuestContext(CommonContext):
             except Exception as e:
                 logger.exception(e)
                 self.player_sprite = PlayerSprite.UNKNOWN
+
+            self.death_link = self.slot_data["death_link"]
 
             self.ap_quest_game = Game(self.hard_mode, self.hammer, self.extra_starting_chest)
             self.highest_processed_item_index = 0
