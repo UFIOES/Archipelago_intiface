@@ -117,7 +117,7 @@ class APQuestContext(CommonContext):
                 await asyncio.sleep(0.1)
                 continue
 
-            if "DeathLink" in self.tags != self.death_link:
+            if self.death_link != ("DeathLink" in self.tags):
                 await self.update_death_link(self.death_link)
 
             try:
